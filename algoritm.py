@@ -22,7 +22,6 @@ phrases = ['Oh, and this is {}, let\'s try it!',
            'Wow, {}! It\' be interesting 100%!',
            '{}! We\'re looking for you! Let\'s do it!',
            'Hmmm... We have {}, can you win now?)',]
-expt = []
 
 
 def choose_caracter(user_id):
@@ -38,3 +37,7 @@ def choose_caracter(user_id):
             continue
     databases.save_expt(user_id, expt)
     return rnd.choice(characters[str(person)][1]), rnd.choice(phrases).format(characters[str(person)][0])
+
+def expt_transmission(expt):
+    transmited = [characters[str(i)][0] for i in expt]
+    return transmited

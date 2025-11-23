@@ -3,7 +3,7 @@ from pathlib import Path
 import io
 import json
 
-folder = Path('./templates/TLOU2')
+#folder = Path('./templates/TLOU2')
 
 conn = sqlite3.connect('games_database.db')
 cur = conn.cursor()
