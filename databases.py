@@ -5,8 +5,53 @@ import json
 
 #folder = Path('./templates/TLOU2')
 
-conn = sqlite3.connect('games_database.db')
-cur = conn.cursor()
+DB_PATH = 'games_database.db'
+
+
+def get_expt(user_id):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT expt FROM users WHERE id = ?", (user_id,))
+    row = cur.fetchone()
+    conn.close()
+    if row and row['expt']:
+        return json.loads(row['expt'])
+    else:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute("INSERT OR IGNORE INTO users (id, expt) VALUES (?, ?)", (user_id, json.dumps([])))
+        conn.commit()
+        conn.close()
+        return []
+
+
+def save_expt(user_id, expt_list):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    cur.execute("INSERT OR REPLACE INTO users (id, expt) VALUES (?, ?)", (user_id, json.dumps(expt_list)))
+    conn.commit()
+    conn.close()
+
+def get_photo_from_db(filename):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute("SELECT img FROM images WHERE name = ?", (filename,))
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        raise FileNotFoundError(f"Фото {filename} не найдено в базе!")
+
+    photo_file = io.BytesIO(row['img'])
+    photo_file.name = filename
+    photo_file.seek(0)
+    return photo_file
+
+# conn = sqlite3.connect('games_database.db', check_same_thread=False)
+# cur = conn.cursor()
 # cur.execute('''
 # CREATE TABLE IF NOT EXISTS users (
 #     id INTEGER NOT NULL PRIMARY KEY,
@@ -14,19 +59,11 @@ cur = conn.cursor()
 # )
 # ''')
 
-def get_expt(user_id):
-    cur.execute("SELECT expt FROM users WHERE id = ?", (user_id,))
-    row = cur.fetchone()
-    if row and row[0]:
-        return json.loads(row[0])
-    else:
-        cur.execute("INSERT OR IGNORE INTO users (id, expt) VALUES (?, ?)",(user_id, json.dumps([])))
-        conn.commit()
-        return []
 
-def save_expt(user_id, expt_list):
-    cur.execute("INSERT OR REPLACE INTO users (id, expt) VALUES (?, ?)", (user_id, str(expt_list)))
-    conn.commit()
+
+# def save_expt(user_id, expt_list):
+#     cur.execute("INSERT OR REPLACE INTO users (id, expt) VALUES (?, ?)", (user_id, str(expt_list)))
+#     conn.commit()
 
 # cur.execute('''
 # CREATE TABLE IF NOT EXISTS images (
@@ -39,13 +76,13 @@ def save_expt(user_id, expt_list):
 #     if file_path.suffix.lower() in {".jpg", ".jpeg", ".png"}:
 #         cur.execute("INSERT OR IGNORE INTO images (name, img) VALUES (?, ?)",(file_path.name, file_path.read_bytes()))
 
-def get_photo_from_db(filename):
-    cur.execute("SELECT img FROM images WHERE name = ?", (filename,))
-    row = cur.fetchone()
-    photo_file = io.BytesIO(row[0])
-    photo_file.name = filename
-    photo_file.seek(0)
-    return photo_file
-
-conn.commit()
-conn.close()
+# def get_photo_from_db(filename):
+#     cur.execute("SELECT img FROM images WHERE name = ?", (filename,))
+#     row = cur.fetchone()
+#     photo_file = io.BytesIO(row[0])
+#     photo_file.name = filename
+#     photo_file.seek(0)
+#     return photo_file
+#
+# conn.commit()
+# conn.close()

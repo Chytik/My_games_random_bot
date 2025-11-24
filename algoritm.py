@@ -26,6 +26,7 @@ phrases = ['Oh, and this is {}, let\'s try it!',
 
 def choose_caracter(user_id):
     expt = databases.get_expt(user_id)
+
     while True:
         person = rnd.randint(1, 12)
         if person not in expt:
@@ -41,3 +42,5 @@ def choose_caracter(user_id):
 def expt_transmission(expt):
     transmited = [characters[str(i)][0] for i in expt]
     return transmited
+
+
