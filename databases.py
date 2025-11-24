@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-import io
+import io, os
 import json
 
 #folder = Path('./templates/TLOU2')
@@ -86,3 +86,15 @@ def get_photo_from_db(filename):
 #
 # conn.commit()
 # conn.close()
+
+
+DB_FILE = 'user_data.json'
+_cache = json.load(open(DB_FILE, 'r')) if os.path.exists(DB_FILE) else {}
+def load_db():
+    global _cache
+    if os.path.exists(DB_FILE):
+        with open(DB_FILE, 'r') as f:
+            _cache = json.load(f)
+def save_db():
+    with open(DB_FILE, 'w') as f:
+        json.dump(_cache, f, indent=2, ensure_ascii=False)
