@@ -105,7 +105,7 @@ def statistics(callback):
 
 @bot.callback_query_handler(func = lambda callback: callback.data in ['exit'])
 def exit(callback):
-    bot.send_message(callback.message.chat.id, 'Ny i poshel nahyi, chmo eblivoe, blyat')
+    bot.send_message(callback.message.chat.id, 'Bad, my fiend, very bad.')
 
 def show_help(chat_id):
     markup = types.InlineKeyboardMarkup()
